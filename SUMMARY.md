@@ -5,4 +5,4 @@
   * [JVM](java/jvm/jvm.md)
 
 * [Algorithm]()
-  * [data structure](/algorithm/data structure/data.md)
+  * [data structure](algorithm/dataStructure/dataStructure.md)
