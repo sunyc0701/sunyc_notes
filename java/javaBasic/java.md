@@ -85,3 +85,15 @@ concurrent:并发
 lambda表达式的实质 ： 作为接口的实例 
 
 例子：(o1,o2) -> Integer.compare(o1,o2);
+
+
+### jdk和jre的区别
+
+![](/img/java/JDK.png)
+jdk:
+
+JDK(Java Development Kit) 是整个JAVA的核心，包括了Java运行环境（Java Runtime Envirnment），一堆Java工具（javac/java/jdb等）和Java基础的类库（即Java API 包括rt.jar）。
+
+jre:
+
+JRE（Java Runtime Environment，Java运行环境），包含**JVM标准实现**及**Java核心类库**。JRE是Java运行环境，并不是一个开发环境，所以没有包含任何开发工具（如编译器和调试器）
