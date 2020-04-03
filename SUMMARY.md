@@ -1,7 +1,9 @@
 # Table of contents
 
 * [JAVA]()
-  * [Basic](java/javaBasic/java.md)
+  * [JDK]
+    * [basis](java/javaBasic/basis.md)
+    * [Lock](java/javaBasic/lock.md)
   * [JVM](java/jvm/jvm.md)
 * [DataBase]()
   * [MySql]()
