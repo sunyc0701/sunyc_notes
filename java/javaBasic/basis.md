@@ -97,3 +97,9 @@ JDK(Java Development Kit) 是整个JAVA的核心，包括了Java运行环境（J
 jre:
 
 JRE（Java Runtime Environment，Java运行环境），包含**JVM标准实现**及**Java核心类库**。JRE是Java运行环境，并不是一个开发环境，所以没有包含任何开发工具（如编译器和调试器）
+
+
+### 二进制 
+
+
+### 接口和抽象类
