@@ -5,6 +5,7 @@
     * [basis](java/javaBasic/basis.md)
     * [Lock](java/javaBasic/lock.md)
   * [JVM](java/jvm/jvm.md)
+  * [Design](java/Design/design.md)
 * [DataBase]()
   * [MySql]()
     * [Basic](database/mysql/mysqlbs.md)
