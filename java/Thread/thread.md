@@ -21,6 +21,7 @@ volatile是Java虚拟机提供的轻量级的同步机制(synchronized)。
     解决:- 加sync
         - AtomicInteger(底层 CAS)
 - 禁止指令重排
+
 ```java
 class MyData {
     volatile int number = 0;
@@ -50,6 +51,7 @@ public class VolatileTest {
     }
 }
 ```
+
 
 ### volatile应用场景
 
