@@ -103,4 +103,41 @@ Unsafe类中的compareAndSwapInt方法 是一个本地方法(底层汇编)
     }
 ````
 
+### 集合类不安全
+
+#### ArrayList
+
+- 问题: 引发juc java.util.ConcurrentModificationException
+
+- 原因:并发争抢修改导致 。
+
+- 解决方案: 
+  - 1: new Vector<>();
+  - 2:Collections.synchronizedList(new ArrayList<>());
+  - 3:new CopyOnWriteArrayList();(建议)
+
+CopyOnWrite容器即写时复制的容器，往一个容器添加元素时，不直接往当前容器添加，而是复制出来一个新容器，插到最后，添加结束后，将原容器的引用只想新的容器。优点:可以对CopyOnWrite容器进行并发的读而不需要加锁，因为当前容器不会添加任何元素。所以这个容器是一种读写分离的思想。
+
+```java
+  /**
+     * Appends the specified element to the end of this list. 插入最后
+     *
+     * @param e element to be appended to this list
+     * @return {@code true} (as specified by {@link Collection#add})
+     */
+    public boolean add(E e) {
+        final ReentrantLock lock = this.lock;
+        lock.lock();
+        try {
+            Object[] elements = getArray();
+            int len = elements.length;
+            Object[] newElements = Arrays.copyOf(elements, len + 1);
+            newElements[len] = e;
+            setArray(newElements);
+            return true;
+        } finally {
+            lock.unlock();
+        }
+    }
+    ```
 
