@@ -9,7 +9,7 @@
 缺点: 吞吐量会下降很多，队列里面除了第一个线程，其他的线程都会阻塞，cpu幻想阻塞线程的开销会很大。
 
 非公平锁:加锁时不考虑吧排队等待问题，直接尝试获取锁，获取不到自动到对位等待。
-优点:减少cpu唤醒线程的开销，整体的吞吐效率会高点，CPU也不惜幻想所有线程，减少唤起现成的数量。
+优点:减少cpu唤醒线程的开销，整体的吞吐效率会高点，CPU也不惜唤醒所有线程，减少唤起现成的数量。
 切点: 存在线程饿死。
 
 ### 底层:
@@ -193,7 +193,7 @@ final boolean nonfairTryAcquire(int acquires) {
     }
     return false;
 }
-````
+```
 
 unlock方法与公平锁一样 
 
@@ -202,3 +202,98 @@ unlock方法与公平锁一样
 - 在公平锁（FairSync）的lock方法中，会直接调用aquire方法；但是在非公平锁（NonfairSync）的lock方法中，会先采用CAS的方式去获取锁，不管是否有其他线程已经占有锁或者是否有其他线程在等待队列中。
 - 公平锁（FairSync）调用的tryAcquire方法中，会先去检查等待队列中是否有等待的线程；但是在非公平锁（NonfairSync）调用的nonfairTryAcquire不会去检查等待队列。
 - 无论公平锁还是非公平锁，对于排队中的线程，都能保证排在前面的线程一定比排在后面的线程优先获得锁。
+
+
+### 可重入锁(递归锁) 防止死锁
+
+同一个线程外层函数获得锁之后，内层递归函数仍然能获取该锁的代码，在同一个线程在外层方法获取锁的时候，在进入内层方法会自动获取锁。
+也就是说 :**线程可以进入任何一个它已经拥有的锁所同步的代码块。** ReentrantLock/Synchronized 就是一个典型的可重入锁(默认非公平锁)。
+
+####  ReenterLockDemo 
+```java  
+
+/**
+ * synchronized
+ */
+class Phone{
+    public  synchronized  void sendSMS() throws  Exception{
+        System.out.println(Thread.currentThread().getName()+"\t  sendms");
+        sendMail();
+    }
+    public  synchronized  void sendMail() throws  Exception{
+        System.out.println(Thread.currentThread().getName()+"\tsendMail");
+
+    }
+}
+public class ReenterLockDemo {
+    public static void main(String[] args) {
+        Phone phone=new Phone();
+        new Thread(()->{
+            try {
+                phone.sendSMS();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        },"t1").start();
+        new Thread(()->{
+            try {
+                phone.sendSMS();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        },"t2").start();
+    }
+
+
+/**
+ * Runnable
+ */
+class Phone implements Runnable{
+    public  synchronized  void sendSMS() throws  Exception{
+        System.out.println(Thread.currentThread().getName()+"\t  sendms");
+        sendMail();
+    }
+    public  synchronized  void sendMail() throws  Exception{
+        System.out.println(Thread.currentThread().getName()+"\tsendMail");
+
+    }
+    Lock lock=new ReentrantLock();
+    @Override
+    public void run() {
+        get();
+    }
+
+    private void get() {
+        lock.lock();
+        try {
+            System.out.println(Thread.currentThread().getId()+"\t get()");
+            set();
+        }finally {
+            lock.unlock();
+        }
+    }
+
+    private void set() {
+        lock.lock();
+        try {
+            System.out.println(Thread.currentThread().getId()+"\t set()");
+
+        }finally {
+            lock.unlock();
+        }
+    }
+}
+public class ReenterLockDemo {
+    public static void main(String[] args) {
+        Phone phone=new Phone();
+        Thread thread3 = new Thread(phone);
+        Thread thread4 = new Thread(phone);
+        thread3.start();
+        thread4.start();
+    }
+
+```
+### 自旋锁
+
+是指尝试获取锁的线程不会立即阻塞，而是**采用循环的方式去尝试获取锁**，这样的好处是减少线程上下文切换的消耗，缺点是循环会消耗CPU。 
+Unsafe类  ![](/img/java/自旋.png)
