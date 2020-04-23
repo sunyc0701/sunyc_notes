@@ -297,3 +297,62 @@ public class ReenterLockDemo {
 
 是指尝试获取锁的线程不会立即阻塞，而是**采用循环的方式去尝试获取锁**，这样的好处是减少线程上下文切换的消耗，缺点是循环会消耗CPU。 
 Unsafe类  ![](/img/java/自旋.png)
+
+####  自定义实现一个自旋锁。
+
+```java
+public class SpinLinkDemo {
+
+    AtomicReference<Thread> atomicReference = new AtomicReference<>();
+
+    public void mylock() {
+        System.out.println(Thread.currentThread().getName() + "come in ");
+        while (!atomicReference.compareAndSet(null, Thread.currentThread())) {
+
+        }
+
+    }
+
+    public void myUnLock() {
+        System.out.println(Thread.currentThread().getName() + "come out ");
+
+        atomicReference.compareAndSet(Thread.currentThread(), null);
+    }
+
+    public static void main(String[] args) {
+        SpinLinkDemo demo=new SpinLinkDemo();
+        new Thread(()->{
+            demo.mylock();
+            try {
+                TimeUnit.SECONDS.sleep(5);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            demo.myUnLock();
+        },"thread1").start();
+
+        try {
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        new Thread(()->{
+            demo.mylock();
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            demo.myUnLock();
+        },"thread2").start();
+    }
+}
+```
+
+### 独占锁（写锁） / 共享锁 （读锁）
+
+独占锁:指该锁一次只能被一个线程所持有。对ReentrantLock和Synchronized而言都是独占锁。
+
+共享锁:指该锁可以被多个线程所持有。
+
+ReentrantReadWriteLock 读锁是共享锁，写锁是独占锁。
