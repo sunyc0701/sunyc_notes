@@ -4,6 +4,7 @@
   * [JDK]()
     * [basis](java/javaBasic/basis.md)
     * [Lock](java/javaBasic/lock.md)
+    * [HashMap](java/javaBasic/hashMap.md)
   * [JVM](java/jvm/jvm.md)
   * [Design](java/Design/design.md)
   * [Multithreading](java/Thread/thread.md)
@@ -13,3 +14,5 @@
     * [InnoDB](database/mysql/innodb.md)
 * [Algorithm]()
   * [data structure](algorithm/dataStructure/dataStructure.md)
+* [Redis]]()
+  * [basic](redis/basic.md)
